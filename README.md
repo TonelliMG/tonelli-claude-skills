@@ -74,7 +74,7 @@ Basta copiar a pasta da skill para dentro desse diretório:
 
 ```powershell
 # Exemplo: instalar todas as skills globais
-Copy-Item -Recurse .\Global\* "$env:USERPROFILE\.claude\skills\"
+Copy-Item -Recurse .\Global\skills\* "$env:USERPROFILE\.claude\skills\"
 ```
 
 > 💡 Em macOS/Linux o caminho equivalente é `~/.claude/skills`.
@@ -174,7 +174,7 @@ Skills autorais, otimizadas para o meu fluxo. Sempre se comunicam em **portuguê
 
 ```text
 tonelli-claude-skills/
-├── Global/                         # → instalar globalmente (~/.claude/skills)
+├── Global/skills/                         # → instalar globalmente (~/.claude/skills)
 │   ├── writing-plans/
 │   ├── executing-plans/
 │   ├── systematic-debugging/

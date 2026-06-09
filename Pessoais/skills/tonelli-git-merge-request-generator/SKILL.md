@@ -1,364 +1,263 @@
-# Skill Name
-
-tonelli-git-merge-request-generator
-
-## Description
-
-Generates high-quality Merge Request summaries by analyzing the actual differences between two Git branches, including commits, file modifications, and code changes.
-
-This skill is optimized for GitLab workflows and automatically produces a structured MERGE.md document suitable for use as a Merge Request description.
-
-The generated content focuses on providing a clear overview of the delivered changes, impacted areas, business implications, testing considerations, and technical details derived from the actual diff rather than relying solely on commit messages.
-
-The skill should always communicate with the user in Brazilian Portuguese (pt-BR), regardless of the language used internally for analysis.
-
 ---
+name: tonelli-git-merge-request-generator
+description: Generate a structured Merge/Pull Request description (MERGE.md) by analyzing the real diff between two Git branches. Inspects commits, file changes, and code (not just commit messages), infers impacted areas, extracts Jira references from the branch name, detects breaking changes, and writes a ready-to-paste MERGE.md. Auto-detects GitLab (Merge Request) vs GitHub (Pull Request). Optimized for daily use across React, Next.js, Node, and TOTVS Protheus (AdvPL/TLPP) projects. Use when the user runs "/merge", asks to "gerar merge request", "gerar MR", "gerar pull request", or "criar descrição de merge". All output is written in Brazilian Portuguese (pt-BR); code identifiers are preserved as-is.
+license: MIT
+metadata:
+  author: Raphael Tonelli
+  version: "2.0.0"
+  category: Git / Workflow
+  language: pt-BR (output) / en (definition)
+---
+
+# Tonelli Git Merge Request Generator
+
+Generates a structured **MERGE.md** describing a Merge Request (GitLab) or Pull
+Request (GitHub), based on the **actual diff between two branches** — not just the
+commit messages. The document is meant to be copied manually into GitLab/GitHub
+and is usually discarded afterward.
 
 ## Trigger
 
-Primary trigger:
-
-```text
-/merge <source_branch> <target_branch>
+```
+/merge [source_branch] <target_branch>
 ```
 
-Examples:
+Also triggers on "gerar merge request", "gerar MR", "gerar pull request",
+"criar descrição de merge".
 
-```text
-/merge feature/TMS-123 develop
+### Argument rules
 
-/merge develop homolog
+- `/merge <source> <target>` — compare `source` into `target`.
+- `/merge <target>` — **one argument = target**. The source is the **current
+  branch** (`git rev-parse --abbrev-ref HEAD`). This avoids retyping the current
+  branch name every time. Example: `/merge qa` → merge the current branch into
+  `qa`.
+- `/merge` with **no arguments** → **do nothing**. Reply that the command was used
+  incorrectly and show the correct usage. Do not analyze, do not generate.
+- More than two arguments → same as above (invalid usage, stop).
 
-/merge hotfix/login main
-```
+## Output language
+
+- All user-facing responses and the entire **MERGE.md** are written in
+  **Brazilian Portuguese (pt-BR)**, regardless of the language in the history.
+- **Code identifiers are preserved verbatim** — function names, variables, file
+  names, table/field names, API routes, Protheus identifiers — never translated.
 
 ---
 
-## Behavior
+## Workflow
 
-When activated, the skill must:
+Single source of truth for execution. Follow in order; on any failed guard,
+**alert in pt-BR and stop**.
 
-### 1. Validate the provided branches
+### Step 1 — Guard checks (never run without need or on a wrong state)
 
-Verify that both branches exist locally or remotely.
+1. **Not a Git repository** → alert and stop.
+2. **Invalid arguments** (see "Argument rules") → alert with correct usage and
+   stop.
+3. **Resolve branches.** Check both branches locally. If a branch is **not
+   found**, run `git fetch --all` **once** (only when needed — never fetch
+   otherwise) and re-check. If a branch is still missing, alert exactly which one
+   and stop.
+4. **Same branch** (source == target) → alert and stop.
+5. **Source branch outdated** — if `target` has commits not present in `source`
+   (`git rev-list --count <source>..<target>` > 0), the branch is behind. **Warn
+   that the branch is outdated and ask the user to update it manually (merge or
+   rebase) before generating the document. Stop — do not generate MERGE.md.**
+6. **Nothing to merge** — if there are no commits in `source` beyond `target`
+   (`git rev-list --count <target>..<source>` == 0), report "nada a mesclar entre
+   as branches" and stop.
 
-If necessary, execute:
+### Step 2 — Detect the platform
+
+Read the remote (`git remote get-url origin` or `git config --get
+remote.origin.url`):
+
+- URL contains `gitlab` → **GitLab**: use the term **"Merge Request" (MR)**.
+- URL contains `github` → **GitHub**: use the term **"Pull Request" (PR)**.
+- Otherwise → default to **Merge Request** (company default) and note the
+  assumption.
+
+The output **filename is always `MERGE.md`**; only the terminology inside adapts.
+
+### Step 3 — Analyze the branch difference
+
+Compare what `source` introduces relative to where it diverged from `target`.
+**Use the three-dot (`...`) diff on purpose**: it compares from the merge-base, so
+it shows only what the source branch actually adds — not unrelated commits already
+in target.
 
 ```bash
-git fetch --all
+git merge-base <target> <source>                       # divergence point (explicit)
+git log <target>..<source> --oneline --no-merges       # commits being merged (no merge commits)
+git diff <target>...<source> --name-status             # files changed since merge-base
+git diff <target>...<source> --shortstat               # files / insertions / deletions
+git diff <target>...<source>                           # full diff for semantic analysis
 ```
 
----
+Base every conclusion on the **actual diff content**, never on filenames alone.
+Do not speculate about behavior that cannot be inferred from the diff; when a
+conclusion is inferred, say so explicitly.
 
-### 2. Analyze branch differences using
+### Step 4 — Extract Jira references from the branch name
 
-```bash
-git log <target_branch>..<source_branch> --oneline
+Company branches encode Jira references. Parse the **source branch** name (split
+on `-`) with this generic heuristic (works across projects/teams):
 
-git diff <target_branch>...<source_branch> --name-status
-
-git diff <target_branch>...<source_branch> --shortstat
-
-git diff <target_branch>...<source_branch>
-```
-
----
-
-### 3. Detect
-
-* Modified files
-* Added files
-* Deleted files
-* Renamed files
-* Exclusive commits present in the source branch
-* Number of changed files
-* Number of inserted lines
-* Number of removed lines
-* Areas of the system affected by the changes
-
----
-
-### 4. Identify impacted areas
-
-Infer the impacted areas based on the actual diff content.
+- **Card Jira** = the first number that appears **immediately after the first
+  text (non-numeric) segment**.
+- **Chamado Jira** = the number **immediately after a `tick` segment**, when
+  present.
+- Any **leading number** before the first text segment is **ignored**.
+- Also recognize a standard Jira key pattern `LETTERS-NUMBER` (e.g. `TMS-123`) if
+  present.
+- If nothing matches → "Nenhuma referência de card/chamado identificada na
+  branch." Do not invent references.
 
 Examples:
 
-* Authentication
-* API
-* Frontend
-* Backend
-* Database
-* Infrastructure
-* Docker
-* AWS
-* CI/CD
-* ADVPL
-* TLPP
-* Protheus
-* SIGATMS
-* SIGAFAT
-* SIGACOM
+- `23-devsis-1473-melhoria` → Card Jira: **1473** (leading `23` ignored).
+- `1864-devsis-1450-tick-253507-processo` → Card Jira: **1450**, Chamado Jira:
+  **253507** (leading `1864` ignored).
 
-The analysis must prioritize the semantic meaning of the code changes rather than relying exclusively on filenames or directory structures.
+### Step 5 — Identify impacted areas
 
----
+Infer the impacted areas from the **semantic meaning** of the diff (see "Impacted
+areas reference"). For Protheus, identify the affected `SIGA*` modules.
 
-### 5. Generate an executive summary
+### Step 6 — Detect technical categories and breaking changes
 
-Create a concise and business-friendly explanation describing:
+Identify which of these the change includes: new features, bug fixes, refactoring,
+performance, infrastructure, CI/CD, tests, documentation. Flag **breaking
+changes** (removed/renamed public API, changed signatures, altered
+contracts/schemas) for the dedicated section.
 
-* What was implemented;
-* What problems were solved;
-* What improvements were introduced;
-* Which workflows or modules were impacted.
+### Step 7 — Generate the MERGE.md content
 
-The summary should be understandable by both technical and non-technical stakeholders.
+Produce the document below. **The template is always the same; only the depth
+adapts to the size of the change** — be concise for small changes (do not pad to
+save tokens), detailed for large ones. Keep the section structure consistent.
+Empty sections use their standard "Nenhuma ... identificada" line.
 
----
+- **Commits list:** exclude merge commits; if there are many commits, summarize/
+  group them instead of listing every one, to keep the document lean.
+- **Testing recommendations:** derive them from the impacted areas, not generic
+  boilerplate (e.g. an API change → suggest validating the affected endpoints).
 
-### 6. Detect technical categories
+### Step 8 — Write the file
 
-Automatically identify whether the Merge Request includes:
+Write the content to **`MERGE.md` at the repository root**, overwriting any
+existing one (the file is disposable). **Do not print the full document in the
+chat** — only confirm the path written and a one-line summary, to save tokens.
 
-* New features;
-* Bug fixes;
-* Refactoring activities;
-* Performance improvements;
-* Infrastructure changes;
-* CI/CD updates;
-* Test additions or modifications;
-* Documentation updates;
-* Breaking changes.
+### Safety
+
+If anything fails (git command, file write, branch resolution), **stop completely
+and report the problem**. Never attempt to fix it on your own without asking
+first.
 
 ---
 
-### 7. Generate testing recommendations
+## MERGE.md template
 
-Based on the modified areas, suggest validation scenarios that should be executed before approval.
-
-Examples:
-
-* Functional testing;
-* Regression testing;
-* API validation;
-* User acceptance testing;
-* Infrastructure verification.
-
----
-
-## Output Language
-
-**IMPORTANT**
-
-All user-facing responses MUST be written in Brazilian Portuguese (pt-BR).
-
-The generated MERGE.md content MUST also be written entirely in Brazilian Portuguese.
-
-Never generate Merge Request descriptions in English.
-
----
-
-## Output Format
-
-The skill must always generate a MERGE.md document following the structure below.
+Adapt the title to the detected platform ("Merge Request" or "Pull Request").
 
 ```markdown
 # Resumo do Merge Request
 
 ## Branch de origem
-
 <source_branch>
 
 ## Branch de destino
-
 <target_branch>
 
-## Objetivo
+## Referências (Jira)
+- Card Jira: <número ou "não identificado">
+- Chamado Jira: <número ou "não identificado">
 
-Resumo executivo descrevendo o propósito das alterações.
+## Objetivo
+Resumo executivo do propósito das alterações, compreensível por públicos técnico
+e não técnico.
 
 ## Principais alterações
-
-- Alteração identificada 1
-- Alteração identificada 2
-- Alteração identificada 3
+- Alteração 1
+- Alteração 2
 
 ## Áreas impactadas
-
 - Área 1
 - Área 2
-- Área 3
 
 ## Regras de negócio impactadas
+Descrever as regras afetadas, quando aplicável.
+(Se não houver: "Nenhuma regra de negócio impactada identificada.")
 
-Descrever regras de negócio afetadas quando aplicável.
-
-Caso não existam impactos relevantes:
-
-Nenhuma regra de negócio impactada identificada.
+## Breaking changes
+Descrever incompatibilidades e o caminho de migração, quando houver.
+(Se não houver: "Nenhuma breaking change identificada.")
 
 ## Infraestrutura
-
-Descrever alterações relacionadas à infraestrutura, pipelines ou deploy.
-
-Caso não existam:
-
-Nenhuma alteração de infraestrutura identificada.
+Alterações de infraestrutura, pipelines ou deploy.
+(Se não houver: "Nenhuma alteração de infraestrutura identificada.")
 
 ## Testes recomendados
-
-- Teste 1
-- Teste 2
-- Teste 3
+- Teste derivado da área impactada 1
+- Teste derivado da área impactada 2
 
 ## Estatísticas
-
 - X arquivos alterados;
 - Y linhas adicionadas;
 - Z linhas removidas.
 
 ## Commits incluídos
-
 - Commit 1
 - Commit 2
-- Commit 3
+(Se forem muitos, agrupar/resumir.)
 
 ## Observações
-
 Informações adicionais relevantes para revisores e aprovadores.
 ```
 
 ---
 
+## Impacted areas reference
+
+Infer the scope from the actual changed paths; the lists below are vocabulary
+examples per stack.
+
+### TOTVS Protheus (AdvPL / TLPP) — use UPPERCASE module names
+
+`SIGAATF`, `SIGAAUD`, `SIGACFG`, `SIGACOM`, `SIGACTB`, `SIGAEST`, `SIGAFAT`,
+`SIGAFIN`, `SIGAFINTMS`, `SIGAFIS`, `SIGAGCT`, `SIGAGPE`, `SIGAJUR`, `SIGAMDT`,
+`SIGAMNT`, `SIGAOPME`, `SIGAPCO`, `SIGAPON`, `SIGARSP`, `SIGASGQ`, `SIGATMK`,
+`SIGATMS`, `SIGATRM`. Generic fallback: `PROTHEUS`, `ADVPL`, `TLPP`.
+
+When AdvPL/TLPP changes: distinguish technical refactoring from business-rule
+changes, highlight SQL optimizations, performance changes, and framework
+modernization.
+
+### Frontend (React, Next.js, TypeScript, JavaScript)
+
+Areas: user experience, components, pages, hooks, client-side validation.
+
+### Backend (Node.js, PHP, Python)
+
+Areas: APIs, services, authentication, integrations, database interactions.
+
+### Infrastructure (Docker, AWS, Kubernetes, GitHub Actions, GitLab CI)
+
+Areas: deployment pipelines, provisioning, containerization, monitoring,
+automation.
+
+---
+
 ## Rules
 
-* Always analyze the actual Git diff before generating the document.
-* Never rely exclusively on commit messages.
-* Prioritize semantic understanding of the code changes.
-* Avoid generic descriptions such as:
-
-  * "Various improvements";
-  * "General adjustments";
-  * "Bug fixes";
-  * "Minor changes";
-  * "Several updates".
-* Summaries must clearly describe the purpose and impact of the delivery.
-* Focus on generating content useful for code reviewers, testers, technical leaders, and business stakeholders.
-* The generated document must be concise but sufficiently detailed to support the approval process.
-* Do not speculate about functionality that cannot be inferred from the diff.
-* When uncertainty exists, explicitly indicate that the conclusion was inferred from the available changes.
-
----
-
-## Special Handling
-
-### ADVPL / TLPP
-
-When ADVPL or TLPP code is detected:
-
-* Identify impacted Protheus modules;
-* Distinguish technical refactoring from business-rule modifications;
-* Highlight SQL optimizations;
-* Detect performance-related changes;
-* Identify framework modernization initiatives.
-
-Preferred impacted areas include:
-
-* SIGATMS
-* SIGAFAT
-* SIGACOM
-* SIGAEST
-* PROTHEUS
-
----
-
-### Frontend
-
-Frameworks:
-
-* React
-* Next.js
-* TypeScript
-* JavaScript
-
-Emphasize impacts related to:
-
-* User experience;
-* Components;
-* Pages;
-* Hooks;
-* Client-side validation.
-
----
-
-### Backend
-
-Technologies:
-
-* Node.js
-* PHP
-* Python
-
-Emphasize impacts related to:
-
-* APIs;
-* Services;
-* Authentication;
-* Integrations;
-* Database interactions.
-
----
-
-### Infrastructure
-
-Technologies:
-
-* Docker
-* AWS
-* GitHub Actions
-* GitLab CI
-* Kubernetes
-
-Highlight impacts involving:
-
-* Deployment pipelines;
-* Infrastructure provisioning;
-* Containerization;
-* Monitoring;
-* Automation.
-
----
-
-## Expected Result
-
-Whenever the user executes:
-
-```text
-/merge <source_branch> <target_branch>
-```
-
-The skill should:
-
-1. Analyze the differences between the two branches;
-2. Identify the commits involved;
-3. Inspect the actual code changes;
-4. Determine the impacted areas;
-5. Generate an executive summary;
-6. Produce a complete MERGE.md document;
-
----
-
-## Execution Mode
-
-When invoked using:
-
-```text
-/merge <source_branch> <target_branch>
-```
-
-The skill should:
-
-1. Validate the provided branches;
-2. Analyze commits and diffs;
-3. Generate the MERGE.md content;
+- Always analyze the actual diff before generating; never rely solely on commit
+  messages.
+- Prioritize semantic understanding of the code changes over filenames.
+- Never produce generic descriptions ("várias melhorias", "ajustes gerais",
+  "correções diversas", "pequenas mudanças").
+- The document must be concise but detailed enough to support review and approval.
+- Do not speculate about functionality not inferable from the diff; mark inferred
+  conclusions as such.
+- Output is for code reviewers, testers, tech leads, and business stakeholders.

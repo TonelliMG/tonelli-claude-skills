@@ -21,6 +21,7 @@ Este repositório reúne as skills que uso de verdade, agrupadas em quatro frent
   - [🚀 Instalação](#-instalação)
     - [Instalação Global](#instalação-global)
     - [Instalação Local (por projeto)](#instalação-local-por-projeto)
+  - [📜 CLAUDE.md global](#-claudemd-global)
   - [📦 Skills disponíveis](#-skills-disponíveis)
     - [🌍 Global — Fluxo de trabalho](#-global--fluxo-de-trabalho)
     - [🟦 Advpl — TOTVS Protheus (AdvPL / TLPP)](#-advpl--totvs-protheus-advpl--tlpp)
@@ -99,6 +100,28 @@ Copy-Item -Recurse "C:\caminho\para\tonelli-claude-skills\React\skills\*" ".\.cl
 
 ---
 
+## 📜 CLAUDE.md global
+
+Além das skills, este repositório traz um [`CLAUDE.md`](CLAUDE.md) — um arquivo de **diretrizes de comportamento** que o Claude Code carrega automaticamente como contexto. Enquanto as skills entregam conhecimento sob demanda, o `CLAUDE.md` define *como* o Claude deve trabalhar em **todos os meus projetos**: pensar antes de codar, manter simplicidade, fazer mudanças cirúrgicas, verificar antes de afirmar e — importante — usar as skills **só quando a tarefa realmente exigir**.
+
+Ele também ensina ao Claude o **catálogo das minhas skills** (globais e por stack), deixando claro que elas são opcionais: se uma skill não estiver instalada no projeto, o desenvolvimento segue normalmente sem ela.
+
+**Principais diretrizes:**
+
+- 🧠 **Pensar antes de codar** — explicitar suposições, apontar interpretações ambíguas e sugerir abordagens mais simples.
+- ✂️ **Mudanças cirúrgicas** — editar só o que o pedido exige; não mexer em código não relacionado nem ao fluxo.
+- 🪶 **Simplicidade primeiro** — o mínimo de código que resolve; nada especulativo. A maioria das tarefas é simples.
+- ✅ **Evidência antes de afirmar** — não dizer "pronto/corrigido" sem verificar a saída.
+- 🎨 **Respeitar o padrão do projeto** — em React/Next, seguir o que o projeto já usa (Tailwind, shadcn/ui ou CSS manual).
+- 🔤 **Encoding Protheus** — fontes AdvPL/TLPP sempre em Windows-1252 (CP1252).
+- 🧩 **Skills sob demanda** — `plan`/`debug` só quando solicitados; `/commit` e `/merge` quando chamados; code review para conferir mudanças.
+
+**Instalação (global, vale para todos os projetos):**
+
+> É possível usá-lo **por projeto**: basta colocar uma cópia (ajustada às necessidades do repositório) na raiz do projeto. Quando há um `CLAUDE.md` no projeto, as instruções dele têm prioridade sobre as globais.
+
+---
+
 ## 📦 Skills disponíveis
 
 ### 🌍 Global — Fluxo de trabalho
@@ -161,10 +184,10 @@ Skills de boas práticas de frontend moderno. **Recomendadas para instalação l
 
 Skills autorais, otimizadas para o meu fluxo. Sempre se comunicam em **português (pt-BR)**.
 
-| Skill                                 | O que faz                                                                                                                                                                                                                                              |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `tonelli-git-commit-generator`        | Gera mensagens de commit de alta qualidade analisando as mudanças (staged/unstaged) e seguindo **Conventional Commits** e versionamento semântico, identificando automaticamente tipo, escopo e descrição.                                             |
-| `tonelli-git-merge-request-generator` | Gera resumos de **Merge Request** analisando o diff real entre duas branches (commits, arquivos e mudanças de código) e produz um `MERGE.md` estruturado para o GitLab, com visão geral, áreas impactadas, implicações de negócio e detalhes técnicos. |
+| Skill                                 | O que faz                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `tonelli-git-commit-generator`        | Gera mensagens de commit de alta qualidade analisando o **diff real do staged** e seguindo **Conventional Commits** + versionamento semântico: infere tipo (incl. `perf`/`chore`/`revert`), escopo e descrição, detecta breaking changes e propõe um commit seguro no PowerShell. Disparada por `/commit`.        |
+| `tonelli-git-merge-request-generator` | Gera descrição de **Merge/Pull Request** (`MERGE.md`) analisando o diff real entre duas branches: **detecta GitLab vs GitHub**, aceita `/merge <target>` usando a branch atual como origem, extrai card/chamado **Jira** do nome da branch, alerta quando a branch está desatualizada e detecta breaking changes. |
 
 **Fonte original:** autorais (Raphael Tonelli).
 
@@ -174,6 +197,9 @@ Skills autorais, otimizadas para o meu fluxo. Sempre se comunicam em **portuguê
 
 ```text
 tonelli-claude-skills/
+├── CLAUDE.md                              # → diretrizes globais (~/.claude/CLAUDE.md)
+├── .gitignore                             # → ignora artefatos de IA (mantém CLAUDE.md)
+│
 ├── Global/skills/                         # → instalar globalmente (~/.claude/skills)
 │   ├── writing-plans/
 │   ├── executing-plans/

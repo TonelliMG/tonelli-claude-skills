@@ -1,0 +1,29 @@
+# AI assistants — ignore agent/config artifacts, but keep CLAUDE.md versioned
+
+# Claude
+.claude/
+.claude.json
+.claude.json.backup
+
+# Codex
+.codex/
+CODEX.md
+
+# Other agents (Cursor, Aider, Gemini, Copilot, Windsurf, etc.)
+AGENTS.md
+.cursor/
+.cursorrules
+.aider*
+.gemini/
+GEMINI.md
+.windsurf/
+.github/copilot-instructions.md
+
+# Keep CLAUDE.md tracked even though .claude/ is ignored
+!CLAUDE.md
+
+# OS / editor noise
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/

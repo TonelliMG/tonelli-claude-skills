@@ -57,6 +57,7 @@ Never claim done/fixed/passing without running the check and seeing the output.
 - Windows + PowerShell by default: `$null` not `/dev/null`, `$env:VAR` not `$VAR`, backtick for line continuation.
 - **TOTVS Protheus (AdvPL/TLPP):** source files must be **Windows-1252 (CP1252)** — UTF-8 breaks the compiler.
 - **React / Next.js:** always follow the existing project's pattern. Some use Tailwind, some shadcn/ui, some hand-written CSS — detect what the project uses and match it. Never introduce a styling approach the project doesn't already use.
+- **Flutter:** follow Clean Architecture (domain/data/presentation layers). Match the existing state management solution (Riverpod vs Bloc) — never mix the two.
 
 ## 7. My Skills (optional — use only when needed)
 
@@ -73,12 +74,14 @@ I keep a curated skill set (repo: `tonelli-claude-skills`). **Skills are not alw
 Reference of what exists, grouped by where it lives. **Only load/consider skills in scope for the current project — ignore the rest.**
 
 **Global (`~/.claude/skills`) — workflow:**
-`writing-plans`, `executing-plans`, `systematic-debugging`, `verification-before-completion`, `requesting-code-review`, `finishing-a-development-branch`, `tonelli-git-commit-generator`, `tonelli-git-merge-request-generator`.
+`writing-plans`, `executing-plans`, `systematic-debugging`, `verification-before-completion`, `requesting-code-review`, `receiving-code-review`, `finishing-a-development-branch`, `careful`, `tonelli-git-commit-generator`, `tonelli-git-merge-request-generator`.
 
 **Local per project (`.claude/skills`) — by stack:**
 - **TOTVS Protheus (AdvPL/TLPP):** `advpl-to-tlpp-migration`, `mvc-generator`, `tlpp-rest-endpoint-generator`, `fwrest-client-generator`, `entry-point-designer`, `query-builder`, `data-dictionary-lookup`, `sql-optimization`, `code-review`, `refactor`, `context-map`, `utf8-to-cp1252-conversion`.
-- **React:** `building-components`, `composition-patterns`, `react-best-practices`, `web-design-guidelines`.
-- **Next.js:** `building-components`, `composition-patterns`, `react-best-practices`, `web-design-guidelines`, `next-best-practices`.
+- **React:** `building-components`, `composition-patterns`, `react-best-practices`, `web-design-guidelines`, `component-refactoring`, `shadcn`.
+- **Next.js:** `building-components`, `composition-patterns`, `react-best-practices`, `web-design-guidelines`, `next-best-practices`, `next-cache-components`, `next-upgrade`.
+- **Node.js:** `api-designer`, `openapi-spec-generator`, `sql-optimization-patterns`.
+- **Flutter:** `flutter-expert`, `flutter-init`, `flutter-building-layouts`, `flutter-caching-data`, `flutter-dart-code-review`.
 
 The personal `tonelli-*` skills communicate in **pt-BR**; code identifiers stay as-is.
 

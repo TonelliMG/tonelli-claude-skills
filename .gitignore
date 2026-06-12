@@ -22,6 +22,11 @@ GEMINI.md
 # Keep CLAUDE.md tracked even though .claude/ is ignored
 !CLAUDE.md
 
+# Flutter — generated artifacts (e.g. if a skill is tested locally)
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
 # OS / editor noise
 Thumbs.db
 .DS_Store

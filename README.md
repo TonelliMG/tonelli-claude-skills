@@ -4,11 +4,13 @@
 
 Skills são pacotes de instruções, contexto e conhecimento especializado que o [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) carrega automaticamente quando a tarefa combina com a descrição da skill. Na prática, é como dar ao Claude um "manual" do seu jeito de trabalhar, da sua stack e das suas convenções — sem precisar repetir o mesmo contexto toda vez.
 
-Este repositório reúne as skills que uso de verdade, agrupadas em quatro frentes:
+Este repositório reúne as skills que uso de verdade, agrupadas em seis frentes:
 
 - 🌍 **Global** — fluxo de trabalho (planejar, depurar, revisar, finalizar)
 - 🟦 **Advpl** — desenvolvimento TOTVS Protheus (AdvPL / TLPP)
 - ⚛️ **React / Next** — frontend moderno com React e Next.js
+- 🐦 **Flutter** — aplicações cross-platform com Flutter e Dart
+- 🟩 **Node.js** — APIs, especificações OpenAPI e otimização SQL
 - 🧑‍💻 **Pessoais** — minhas skills autorais
 
 ---
@@ -26,6 +28,8 @@ Este repositório reúne as skills que uso de verdade, agrupadas em quatro frent
     - [🌍 Global — Fluxo de trabalho](#-global--fluxo-de-trabalho)
     - [🟦 Advpl — TOTVS Protheus (AdvPL / TLPP)](#-advpl--totvs-protheus-advpl--tlpp)
     - [⚛️ React / Next — Frontend](#️-react--next--frontend)
+    - [🐦 Flutter — Mobile / Desktop](#-flutter--mobile--desktop)
+    - [🟩 Node.js — Backend](#-nodejs--backend)
     - [🧑‍💻 Pessoais](#-pessoais)
   - [🗂 Estrutura do repositório](#-estrutura-do-repositório)
   - [🙏 Créditos e fontes](#-créditos-e-fontes)
@@ -135,9 +139,11 @@ Skills de processo de desenvolvimento, agnósticas de stack. **Recomendadas para
 | `systematic-debugging`           | Aplica um método sistemático de depuração diante de qualquer bug, teste falhando ou comportamento inesperado — **antes** de propor correções.        |
 | `verification-before-completion` | Exige rodar comandos de verificação e confirmar a saída **antes** de afirmar que algo está pronto/corrigido/passando. Evidência antes de afirmações. |
 | `requesting-code-review`         | Conduz uma revisão de código ao concluir tarefas ou antes de fazer merge, garantindo que o trabalho atende aos requisitos.                           |
+| `receiving-code-review`          | Orienta a **recepção** de feedback de code review: verificar antes de implementar, perguntar antes de assumir, fazer pushback técnico quando necessário — sem concordância performática.  |
 | `finishing-a-development-branch` | Ajuda a finalizar uma branch de desenvolvimento apresentando opções estruturadas de merge, PR ou limpeza.                                            |
+| `careful`                        | Ativa **guardrails de segurança** para comandos destrutivos (`rm -rf`, `DROP TABLE`, `git push --force`, `kubectl delete` etc.): emite aviso antes de cada operação de risco. Use com "be careful", "safety mode" ou "prod mode". |
 
-**Fonte original:** [github.com/obra/superpowers](https://github.com/obra/superpowers)
+**Fonte original:** [github.com/obra/superpowers](https://github.com/obra/superpowers) · [gstack](https://github.com/gstack) (`careful`)
 
 ---
 
@@ -175,8 +181,42 @@ Skills de boas práticas de frontend moderno. **Recomendadas para instalação l
 | `react-best-practices` (`vercel-react-best-practices`) | Guidelines de **performance** de React/Next.js da engenharia da Vercel: padrões para componentes, data fetching e otimização de bundle.                                                                                                             |   ✅   |   ✅   |
 | `web-design-guidelines`                                | Revisa código de UI quanto às **Web Interface Guidelines**: acessibilidade, UX e boas práticas de design ("review my UI", "check accessibility").                                                                                                   |   ✅   |   ✅   |
 | `next-best-practices`                                  | Boas práticas específicas de **Next.js**: file conventions, fronteiras RSC, padrões de dados, async APIs, metadata, error handling, route handlers, otimização de imagem/fonte e bundling.                                                          |   —   |   ✅   |
+| `next-cache-components`                                | **Next.js 16+ Cache Components** (PPR): diretiva `use cache`, perfis `cacheLife`, invalidação com `cacheTag`/`updateTag`/`revalidateTag`, migração de `unstable_cache` e limitações de runtime.                                                    |   —   |   ✅   |
+| `next-upgrade`                                         | **Upgrade incremental do Next.js**: detecta a versão atual, busca o guia oficial, roda codemods automáticos (`@next/codemod`) e orienta mudanças manuais de breaking changes para cada major.                                                       |   —   |   ✅   |
+| `component-refactoring`                                | Refatora componentes React de **alta complexidade** no Dify frontend: extração de hooks, sub-componentes, context providers e lógica de formulários — acionado quando complexity > 50 ou lineCount > 300.                                           |   ✅   |   ✅   |
+| `shadcn`                                               | Gerencia **shadcn/ui** em projetos existentes: adicionar, buscar, corrigir, estilizar e compor componentes; aplica/troca presets; orienta CLI, registries e regras críticas de composição.                                                          |   ✅   |   ✅   |
 
-**Fonte original:** [Vercel — Agent Resources / Skills](https://vercel.com/docs/agent-resources/skills)
+**Fonte original:** [Vercel — Agent Resources / Skills](https://vercel.com/docs/agent-resources/skills) · [shadcn/ui](https://ui.shadcn.com) (`shadcn`)
+
+---
+
+### 🐦 Flutter — Mobile / Desktop
+
+Skills para desenvolvimento cross-platform com Flutter e Dart. **Recomendadas para instalação local**, em projetos Flutter.
+
+| Skill                      | O que faz                                                                                                                                                                                                                                                  |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `flutter-expert`           | Engenheiro Flutter sênior para apps Flutter 3.19+ e Dart 3.3+: gerenciamento de estado com Riverpod 2.0 ou Bloc, navegação com GoRouter, widgets com `const` optimization, testes e profiling de performance.                                              |
+| `flutter-init`             | Cria um **novo projeto Flutter** com Clean Architecture, Riverpod 3.0, Drift e stack moderna: escolha de domínio (Todo/Habit/Note/Expense/Custom), preset (Minimal/Essential/Full Stack), geração de código e validação com `flutter analyze`.             |
+| `flutter-building-layouts` | Constrói **layouts Flutter** usando o sistema de constraints: Row/Column, Expanded/Flexible, Stack/Positioned, SizedBox, design responsivo com LayoutBuilder e resolução de erros de unbounded constraints.                                                 |
+| `flutter-caching-data`     | Implementa **estratégias de cache** em apps Flutter: offline-first com repositório (stream local → fetch remoto), SQLite via sqflite, SharedPreferences, cache de imagens (`cached_network_image`), scroll cache e pre-warming do FlutterEngine no Android. |
+| `flutter-dart-code-review` | Checklist de **code review Flutter/Dart** agnóstico de biblioteca: linguagem Dart, decomposição de widgets, gerenciamento de estado (BLoC, Riverpod, Provider, GetX, MobX, Signals), performance, testes, acessibilidade, segurança e i18n.                |
+
+**Fonte original:** [github.com/Jeffallan](https://github.com/Jeffallan) (`flutter-expert`) · comunidade (demais)
+
+---
+
+### 🟩 Node.js — Backend
+
+Skills para design e documentação de APIs e otimização de banco de dados. **Recomendadas para instalação local**, em projetos Node.js/backend.
+
+| Skill                      | O que faz                                                                                                                                                                                                                                     |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `api-designer`             | Arquiteto de API sênior para **REST e GraphQL**: modelagem de recursos, padrões de URI, versionamento, paginação, error responses (RFC 7807), geração de **especificação OpenAPI 3.1** completa, autenticação e deprecation policies.         |
+| `openapi-spec-generator`   | Geração automatizada de **especificações OpenAPI**: boas práticas de API Development (REST, GraphQL, autenticação), código e configurações prontos para produção, validados contra padrões OpenAPI.                                            |
+| `sql-optimization-patterns`| Otimização de queries SQL e estratégias de indexação: análise de plano de execução (EXPLAIN), índices B-Tree/GIN/GiST/BRIN, eliminação de N+1, paginação por cursor, CTEs, materialized views, particionamento e monitoramento de slow queries. |
+
+**Fonte original:** [github.com/Jeffallan](https://github.com/Jeffallan) (`api-designer`) · [Jeremy Longshore](https://github.com/intentsolutions) (`openapi-spec-generator`) · comunidade (`sql-optimization-patterns`)
 
 ---
 
@@ -206,7 +246,9 @@ tonelli-claude-skills/
 │   ├── systematic-debugging/
 │   ├── verification-before-completion/
 │   ├── requesting-code-review/
-│   └── finishing-a-development-branch/
+│   ├── receiving-code-review/
+│   ├── finishing-a-development-branch/
+│   └── careful/
 │
 ├── Advpl/skills/                   # → instalar local em projetos Protheus
 │   ├── advpl-to-tlpp-migration/
@@ -226,14 +268,30 @@ tonelli-claude-skills/
 │   ├── building-components/
 │   ├── composition-patterns/
 │   ├── react-best-practices/
-│   └── web-design-guidelines/
+│   ├── web-design-guidelines/
+│   ├── component-refactoring/
+│   └── shadcn/
 │
 ├── Next/skills/                    # → instalar local em projetos Next.js
 │   ├── building-components/
 │   ├── composition-patterns/
 │   ├── react-best-practices/
 │   ├── web-design-guidelines/
-│   └── next-best-practices/
+│   ├── next-best-practices/
+│   ├── next-cache-components/
+│   └── next-upgrade/
+│
+├── Flutter/skills/                 # → instalar local em projetos Flutter
+│   ├── flutter-expert/
+│   ├── flutter-init/
+│   ├── flutter-building-layouts/
+│   ├── flutter-caching-data/
+│   └── flutter-dart-code-review/
+│
+├── Node/skills/                    # → instalar local em projetos Node.js/backend
+│   ├── api-designer/
+│   ├── openapi-spec-generator/
+│   └── sql-optimization-patterns/
 │
 └── Pessoais/skills/                # → instalar global ou local
     ├── tonelli-git-commit-generator/

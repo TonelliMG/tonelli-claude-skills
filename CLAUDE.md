@@ -82,6 +82,7 @@ Reference of what exists, grouped by where it lives. **Only load/consider skills
 - **Next.js:** `building-components`, `composition-patterns`, `react-best-practices`, `web-design-guidelines`, `next-best-practices`, `next-cache-components`, `next-upgrade`.
 - **Node.js:** `api-designer`, `openapi-spec-generator`, `sql-optimization-patterns`.
 - **Flutter:** `flutter-expert`, `flutter-init`, `flutter-building-layouts`, `flutter-caching-data`, `flutter-dart-code-review`.
+- **n8n:** `n8n-workflow-patterns`, `n8n-expression-syntax`, `n8n-node-configuration`, `n8n-validation-expert`, `n8n-code-javascript`, `n8n-code-python`, `n8n-code-tool`.
 
 The personal `tonelli-*` skills communicate in **pt-BR**; code identifiers stay as-is.
 

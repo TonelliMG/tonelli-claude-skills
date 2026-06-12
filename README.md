@@ -4,13 +4,14 @@
 
 Skills são pacotes de instruções, contexto e conhecimento especializado que o [Claude Code](https://docs.claude.com/en/docs/claude-code/overview) carrega automaticamente quando a tarefa combina com a descrição da skill. Na prática, é como dar ao Claude um "manual" do seu jeito de trabalhar, da sua stack e das suas convenções — sem precisar repetir o mesmo contexto toda vez.
 
-Este repositório reúne as skills que uso de verdade, agrupadas em seis frentes:
+Este repositório reúne as skills que uso de verdade, agrupadas em sete frentes:
 
 - 🌍 **Global** — fluxo de trabalho (planejar, depurar, revisar, finalizar)
 - 🟦 **Advpl** — desenvolvimento TOTVS Protheus (AdvPL / TLPP)
 - ⚛️ **React / Next** — frontend moderno com React e Next.js
 - 🐦 **Flutter** — aplicações cross-platform com Flutter e Dart
 - 🟩 **Node.js** — APIs, especificações OpenAPI e otimização SQL
+- 🔁 **n8n** — automação de workflows e integrações low-code
 - 🧑‍💻 **Pessoais** — minhas skills autorais
 
 ---
@@ -30,6 +31,7 @@ Este repositório reúne as skills que uso de verdade, agrupadas em seis frentes
     - [⚛️ React / Next — Frontend](#️-react--next--frontend)
     - [🐦 Flutter — Mobile / Desktop](#-flutter--mobile--desktop)
     - [🟩 Node.js — Backend](#-nodejs--backend)
+    - [🔁 n8n — Automação de Workflows](#-n8n--automação-de-workflows)
     - [🧑‍💻 Pessoais](#-pessoais)
   - [🗂 Estrutura do repositório](#-estrutura-do-repositório)
   - [🙏 Créditos e fontes](#-créditos-e-fontes)
@@ -220,6 +222,24 @@ Skills para design e documentação de APIs e otimização de banco de dados. **
 
 ---
 
+### 🔁 n8n — Automação de Workflows
+
+Skills para construção, configuração e depuração de workflows no **n8n**. **Recomendadas para instalação local**, em projetos que utilizam n8n como plataforma de automação.
+
+| Skill                       | O que faz                                                                                                                                                                                                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `n8n-workflow-patterns`     | **6 padrões arquiteturais** prontos para uso: webhook processing, HTTP API integration, database operations, AI agent workflow, scheduled tasks e batch processing (SplitInBatches, loops aninhados, paginação). Inclui checklist completo de criação de workflow. |
+| `n8n-expression-syntax`     | Sintaxe de **expressões `{{ }}`**: variáveis `$json`, `$node`, `$now`, `$env`; acesso a dados de webhook (armadilha do `.body`); erros comuns e quando NÃO usar expressões (Code nodes, credenciais, paths).                                                  |
+| `n8n-node-configuration`    | Configuração **orientada a operação**: dependências de propriedades (`displayOptions`), níveis de detalhe do `get_node` (standard/full/search), padrões por tipo de nó (resource-operation, HTTP, database, conditional) e edições cirúrgicas com `patchNodeField`. |
+| `n8n-validation-expert`     | Interpretação e correção de **erros de validação**: perfis (minimal/runtime/ai-friendly/strict), auto-sanitização de operadores, falsos positivos, `n8n_autofix_workflow` e estratégias de recuperação.                                                        |
+| `n8n-code-javascript`       | Código **JavaScript em Code nodes**: sintaxe `$input/$json/$node`, `$helpers.httpRequest`, DateTime/Luxon, `$jmespath`, SplitInBatches com acumulação cross-iteration via `$getWorkflowStaticData`, `pairedItem` e os 5 erros mais comuns.                    |
+| `n8n-code-python`           | Código **Python (Beta) em Code nodes**: sintaxe `_input/_json/_node`, apenas biblioteca padrão (sem `requests`/`pandas`), diferenças entre Python Beta e Native, e guia de quando preferir JavaScript.                                                        |
+| `n8n-code-tool`             | **Code Tool para AI Agents** (`@n8n/n8n-nodes-langchain.toolCode`): retorna string (não array de itens), lê input via `query`, schemas estruturados com `specifyInputSchema`, erros comuns (`$fromAI` indisponível, "Wrong output type") e quando usar `toolWorkflow` no lugar. |
+
+**Fonte original:** comunidade n8n
+
+---
+
 ### 🧑‍💻 Pessoais
 
 Skills autorais, otimizadas para o meu fluxo. Sempre se comunicam em **português (pt-BR)**.
@@ -292,6 +312,15 @@ tonelli-claude-skills/
 │   ├── api-designer/
 │   ├── openapi-spec-generator/
 │   └── sql-optimization-patterns/
+│
+├── n8n/skills/                     # → instalar local em projetos n8n
+│   ├── n8n-workflow-patterns/
+│   ├── n8n-expression-syntax/
+│   ├── n8n-node-configuration/
+│   ├── n8n-validation-expert/
+│   ├── n8n-code-javascript/
+│   ├── n8n-code-python/
+│   └── n8n-code-tool/
 │
 └── Pessoais/skills/                # → instalar global ou local
     ├── tonelli-git-commit-generator/

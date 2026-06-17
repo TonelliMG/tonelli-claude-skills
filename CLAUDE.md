@@ -65,16 +65,12 @@ I keep a curated skill set (repo: `tonelli-claude-skills`). **Skills are not alw
 
 **Use a skill only when the task genuinely calls for it.** Don't reach for one on simple work. Specifically:
 
-- `writing-plans` / `executing-plans` — only when I explicitly say I want to plan something.
-- `systematic-debugging` — only when I explicitly ask you to debug. Otherwise I'll explain the problem and just want the fix.
-- `requesting-code-review` — worth using to sanity-check my changes before wrapping up.
 - `tonelli-git-commit-generator` (`/commit`) / `tonelli-git-merge-request-generator` (`/merge`) — only when I call them.
-- `finishing-a-development-branch`, `verification-before-completion` — when the moment fits.
 
 Reference of what exists, grouped by where it lives. **Only load/consider skills in scope for the current project — ignore the rest.**
 
-**Global (`~/.claude/skills`) — workflow:**
-`writing-plans`, `executing-plans`, `systematic-debugging`, `verification-before-completion`, `requesting-code-review`, `receiving-code-review`, `finishing-a-development-branch`, `careful`, `tonelli-git-commit-generator`, `tonelli-git-merge-request-generator`.
+**Personal (`tonelli-*`):**
+`tonelli-git-commit-generator`, `tonelli-git-merge-request-generator`.
 
 **Local per project (`.claude/skills`) — by stack:**
 - **TOTVS Protheus (AdvPL/TLPP):** `advpl-to-tlpp-migration`, `mvc-generator`, `tlpp-rest-endpoint-generator`, `fwrest-client-generator`, `entry-point-designer`, `query-builder`, `data-dictionary-lookup`, `sql-optimization`, `code-review`, `refactor`, `context-map`, `utf8-to-cp1252-conversion`.

@@ -6,7 +6,7 @@ Skills são pacotes de instruções, contexto e conhecimento especializado que o
 
 Este repositório reúne as skills que uso de verdade, agrupadas em sete frentes:
 
-- 🌍 **Global** — fluxo de trabalho (planejar, depurar, revisar, finalizar)
+- 🌍 **Opcionais** — fluxo de trabalho (planejar, depurar, revisar, finalizar) — instalação manual, não vêm habilitadas por padrão
 - 🟦 **Advpl** — desenvolvimento TOTVS Protheus (AdvPL / TLPP)
 - ⚛️ **React / Next** — frontend moderno com React e Next.js
 - 🐦 **Flutter** — aplicações cross-platform com Flutter e Dart
@@ -26,7 +26,7 @@ Este repositório reúne as skills que uso de verdade, agrupadas em sete frentes
     - [Instalação Local (por projeto)](#instalação-local-por-projeto)
   - [📜 CLAUDE.md global](#-claudemd-global)
   - [📦 Skills disponíveis](#-skills-disponíveis)
-    - [🌍 Global — Fluxo de trabalho](#-global--fluxo-de-trabalho)
+    - [🌍 Opcionais — Fluxo de trabalho](#-opcionais--fluxo-de-trabalho)
     - [🟦 Advpl — TOTVS Protheus (AdvPL / TLPP)](#-advpl--totvs-protheus-advpl--tlpp)
     - [⚛️ React / Next — Frontend](#️-react--next--frontend)
     - [🐦 Flutter — Mobile / Desktop](#-flutter--mobile--desktop)
@@ -61,9 +61,9 @@ Quanto mais específica a `description`, melhor o Claude acerta o momento de usa
 
 Há dois lugares onde as skills podem viver:
 
-### Instalação Global
+### Instalação Global (opcional)
 
-Skills globais ficam disponíveis em **todos os projetos** da sua máquina. São ideais para fluxos de trabalho que independem da stack (planejar, depurar, revisar etc.).
+Skills globais ficam disponíveis em **todos os projetos** da sua máquina. As de fluxo de trabalho (planejar, depurar, revisar etc.) ficam em `Global/opicionais/` e são **opcionais** — não vêm habilitadas por padrão. Instale manualmente apenas as que quiser.
 
 **Local de instalação (Windows):**
 
@@ -80,8 +80,11 @@ C:\Users\raphael.tonelli\.claude\skills
 Basta copiar a pasta da skill para dentro desse diretório:
 
 ```powershell
-# Exemplo: instalar todas as skills globais
-Copy-Item -Recurse .\Global\skills\* "$env:USERPROFILE\.claude\skills\"
+# Exemplo: instalar uma skill opcional específica
+Copy-Item -Recurse .\Global\opicionais\systematic-debugging "$env:USERPROFILE\.claude\skills\"
+
+# Ou todas as opcionais de uma vez
+Copy-Item -Recurse .\Global\opicionais\* "$env:USERPROFILE\.claude\skills\"
 ```
 
 > 💡 Em macOS/Linux o caminho equivalente é `~/.claude/skills`.
@@ -130,9 +133,9 @@ Ele também ensina ao Claude o **catálogo das minhas skills** (globais e por st
 
 ## 📦 Skills disponíveis
 
-### 🌍 Global — Fluxo de trabalho
+### 🌍 Opcionais — Fluxo de trabalho
 
-Skills de processo de desenvolvimento, agnósticas de stack. **Recomendadas para instalação global.** Vêm do excelente projeto [obra/superpowers](https://github.com/obra/superpowers).
+Skills de processo de desenvolvimento, agnósticas de stack. Vivem em `Global/opicionais/` e são **opcionais**: não vêm mais habilitadas por padrão — instale manualmente (global ou local) só quando quiser. Vêm do excelente projeto [obra/superpowers](https://github.com/obra/superpowers).
 
 | Skill                            | O que faz                                                                                                                                            |
 | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -260,15 +263,17 @@ tonelli-claude-skills/
 ├── CLAUDE.md                              # → diretrizes globais (~/.claude/CLAUDE.md)
 ├── .gitignore                             # → ignora artefatos de IA (mantém CLAUDE.md)
 │
-├── Global/skills/                         # → instalar globalmente (~/.claude/skills)
-│   ├── writing-plans/
-│   ├── executing-plans/
-│   ├── systematic-debugging/
-│   ├── verification-before-completion/
-│   ├── requesting-code-review/
-│   ├── receiving-code-review/
-│   ├── finishing-a-development-branch/
-│   └── careful/
+├── Global/
+│   ├── skills/                            # → vazia por padrão (instale aqui o que quiser global)
+│   └── opicionais/                        # → skills de fluxo, opcionais (instalação manual)
+│       ├── writing-plans/
+│       ├── executing-plans/
+│       ├── systematic-debugging/
+│       ├── verification-before-completion/
+│       ├── requesting-code-review/
+│       ├── receiving-code-review/
+│       ├── finishing-a-development-branch/
+│       └── careful/
 │
 ├── Advpl/skills/                   # → instalar local em projetos Protheus
 │   ├── advpl-to-tlpp-migration/

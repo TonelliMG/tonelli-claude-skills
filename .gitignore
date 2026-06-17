@@ -10,7 +10,6 @@
 CODEX.md
 
 # Other agents (Cursor, Aider, Gemini, Copilot, Windsurf, etc.)
-AGENTS.md
 .cursor/
 .cursorrules
 .aider*
@@ -19,8 +18,9 @@ GEMINI.md
 .windsurf/
 .github/copilot-instructions.md
 
-# Keep CLAUDE.md tracked even though .claude/ is ignored
+# Keep CLAUDE.md and AGENTS.md tracked even though .claude/ and .agents/ are ignored
 !CLAUDE.md
+!AGENTS.md
 
 # Flutter — generated artifacts (e.g. if a skill is tested locally)
 .dart_tool/
